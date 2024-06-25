@@ -531,7 +531,10 @@ def run(
         "it only implements basic security checks."
     )
 
-    httpd.socket = ssl.wrap_socket(httpd.socket, keyfile=key, certfile=cert, server_side=True)
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    context.load_cert_chain(cert, key)
+
+    httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
     
     logging.info(f"Starting httpsd at {host} on port {port}...")
     httpd.serve_forever()
